@@ -2,11 +2,11 @@ function MainFunction() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('#Insert Spreadsheet Name');
   var lastRow = spreadsheet.getLastRow();
   var lastCol = spreadsheet.getLastColumn() -3;
-  
+
   //Insert the start row, set to 2 to skip the headers :)
   var startRow = 2;
   var spreadsheetObject = spreadsheet.getSheetValues(1, 1, lastRow, lastCol);
-  
+
   var supervisor = 'Add email for person you want to receive admin styled email notifications';
   var supervisors_first_name = 'Add in your admins name';
   
@@ -16,7 +16,7 @@ function MainFunction() {
   trouble_makers['DR_trouble_makers'] = {seven_days: {}, two_weeks: {}, thirty_days: {}};
   trouble_makers['PL_trouble_makers'] = {seven_days: {}, two_weeks: {}, thirty_days: {}};
   trouble_makers['TB_trouble_makers'] = {seven_days: {}, two_weeks: {}, thirty_days: {}};
-  
+
     {
         // the rows are indexed starting at 1, and the first row
         // is the headers, so start with row 2
@@ -36,11 +36,13 @@ function MainFunction() {
                 var TB_Test_Expiration = spreadsheetObject[i][10];
                 var Days_Remaining_TB = spreadsheetObject[i][11];
                 var Email = spreadsheetObject[i][12];
+                
                 check_AI_Dates(Auto_Insurance_Expiration, Days_Remaining_AI, Employee, supervisor, supervisors_first_name, Email);
                 check_CPR_Dates(CPR_Expiration_Date, Days_Remaining_CPR, Employee, supervisor, supervisors_first_name, Email);
                 check_TB_Dates(TB_Test_Expiration, Days_Remaining_TB, Employee, supervisor, supervisors_first_name, Email);
                 check_DL_Dates(Drivers_licenses_Expiration, Days_Remaining_DL, Employee, supervisor, supervisors_first_name, Email);
                 check_Pro_Dates(Professional_License_Expiration_Date, Days_Remaining_PL, Employee, supervisor, supervisors_first_name, Email);
+                
                 if (Employee != '') {
                     if (Days_Remaining_DL <= 15) {
                         if (Days_Remaining_DL <= 15 && Days_Remaining_DL > 7) {
@@ -359,6 +361,9 @@ function MainFunction() {
         }
     }
 }
+
+//Take the troubleMaker object from the mainFunc and emails the supervisor you have set,
+//this can work with a list of supervisors if you'd like.
 function Email_Supervisor_With_Update(trouble_makers_object, supervisor) {
     var ai_html_rows = "";
     var ai_index = 0;
@@ -424,6 +429,7 @@ function Email_Supervisor_With_Update(trouble_makers_object, supervisor) {
     Html_Table(tb_html_rows, supervisor, 'Upcoming TB Test Expirations');
 }
 
+//HTML table template, that you can pass your table rows into, it then emails the supervisor passed as well.
 function Html_Table(rows, supervisor, type) {
   if (rows !== ''){
         var html_table = '<table><tr>' +
