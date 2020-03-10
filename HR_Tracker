@@ -17,6 +17,7 @@ function MainFunction() {
   trouble_makers['PL_trouble_makers'] = {seven_days: {}, two_weeks: {}, thirty_days: {}};
   trouble_makers['TB_trouble_makers'] = {seven_days: {}, two_weeks: {}, thirty_days: {}};
 
+
     {
         // the rows are indexed starting at 1, and the first row
         // is the headers, so start with row 2
