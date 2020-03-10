@@ -1,0 +1,439 @@
+function MainFunction() {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('#Insert Spreadsheet Name');
+  var lastRow = spreadsheet.getLastRow();
+  var lastCol = spreadsheet.getLastColumn() -3;
+  
+  //Insert the start row, set to 2 to skip the headers :)
+  var startRow = 2;
+  var spreadsheetObject = spreadsheet.getSheetValues(1, 1, lastRow, lastCol);
+  
+  var supervisor = 'Add email for person you want to receive admin styled email notifications';
+  var supervisors_first_name = 'Add in your admins name';
+  
+  var trouble_makers = {};
+  trouble_makers['AI_trouble_makers'] = {seven_days: {}, two_weeks: {}, thirty_days: {}};
+  trouble_makers['CPR_trouble_makers'] = {seven_days: {}, two_weeks: {}, thirty_days: {}};
+  trouble_makers['DR_trouble_makers'] = {seven_days: {}, two_weeks: {}, thirty_days: {}};
+  trouble_makers['PL_trouble_makers'] = {seven_days: {}, two_weeks: {}, thirty_days: {}};
+  trouble_makers['TB_trouble_makers'] = {seven_days: {}, two_weeks: {}, thirty_days: {}};
+  
+    {
+        // the rows are indexed starting at 1, and the first row
+        // is the headers, so start with row 2
+        for (i = startRow; i <= lastRow; i++) {
+            // Iterate through the rows and set values to variables for use in following functions to be created...
+            if (i < lastRow) {
+                var Employee = spreadsheetObject[i][0];
+                var Drivers_licenses_Expiration = spreadsheetObject[i][1];
+                var Days_Remaining_DL = spreadsheetObject[i][2];
+                var Auto_Insurance_Expiration = spreadsheetObject[i][3];
+                var Days_Remaining_AI = spreadsheetObject[i][4];
+                var Professional_License_Expiration_Date = spreadsheetObject[i][5];
+                var Days_Remaining_PL = spreadsheetObject[i][6];
+                var CPR_Expiration_Date = spreadsheetObject[i][7];
+                var Days_Remaining_CPR = spreadsheetObject[i][8];
+                var TB_Test_Date = spreadsheetObject[i][9];
+                var TB_Test_Expiration = spreadsheetObject[i][10];
+                var Days_Remaining_TB = spreadsheetObject[i][11];
+                var Email = spreadsheetObject[i][12];
+                check_AI_Dates(Auto_Insurance_Expiration, Days_Remaining_AI, Employee, supervisor, supervisors_first_name, Email);
+                check_CPR_Dates(CPR_Expiration_Date, Days_Remaining_CPR, Employee, supervisor, supervisors_first_name, Email);
+                check_TB_Dates(TB_Test_Expiration, Days_Remaining_TB, Employee, supervisor, supervisors_first_name, Email);
+                check_DL_Dates(Drivers_licenses_Expiration, Days_Remaining_DL, Employee, supervisor, supervisors_first_name, Email);
+                check_Pro_Dates(Professional_License_Expiration_Date, Days_Remaining_PL, Employee, supervisor, supervisors_first_name, Email);
+                if (Employee != '') {
+                    if (Days_Remaining_DL <= 15) {
+                        if (Days_Remaining_DL <= 15 && Days_Remaining_DL > 7) {
+                            trouble_makers['DR_trouble_makers']['two_weeks'][i] = {
+                                Days_Remaining: Days_Remaining_DL,
+                                Name: Employee
+                            };
+                        }
+                        if (Days_Remaining_DL <= 7) {
+                            trouble_makers['DR_trouble_makers']['seven_days'][i] = {
+                                Days_Remaining: Days_Remaining_DL,
+                                Name: Employee
+                            };
+                        }
+                    }
+                    if (Days_Remaining_TB <= 30) {
+                        if (Days_Remaining_TB == 30) {
+                            trouble_makers['TB_trouble_makers']['thirty_days'][i] = {
+                                Days_Remaining: Days_Remaining_TB,
+                                Name: Employee
+                            };
+                        }
+                        if (Days_Remaining_TB < 30 && Days_Remaining_TB > 7) {
+                            trouble_makers['TB_trouble_makers']['two_weeks'][i] = {
+                                Days_Remaining: Days_Remaining_TB,
+                                Name: Employee
+                            };
+                        }
+                        if (Days_Remaining_TB < 7) {
+                            trouble_makers['TB_trouble_makers']['seven_days'][i] = {
+                                Days_Remaining: Days_Remaining_TB,
+                                Name: Employee
+                            };
+                        }
+                    }
+                    if (Days_Remaining_CPR <= 30) {
+                        if (Days_Remaining_CPR == 30) {
+                            trouble_makers['CPR_trouble_makers']['thirty_days'][i] = {
+                                Days_Remaining: Days_Remaining_CPR,
+                                Name: Employee
+                            };
+                        }
+                        if (Days_Remaining_CPR < 30 && Days_Remaining_CPR > 7) {
+                            trouble_makers['CPR_trouble_makers']['two_weeks'][i] = {
+                                Days_Remaining: Days_Remaining_CPR,
+                                Name: Employee
+                            };
+                        }
+                        if (Days_Remaining_CPR < 7) {
+                            trouble_makers['CPR_trouble_makers']['seven_days'][i] = {
+                                Days_Remaining: Days_Remaining_CPR,
+                                Name: Employee
+                            };
+                        }
+                    }
+                    if (Days_Remaining_PL <= 30) {
+                        if (Days_Remaining_PL == 30) {
+                            trouble_makers['PL_trouble_makers']['thirty_days'][i] = {
+                                Days_Remaining: Days_Remaining_PL,
+                                Name: Employee
+                            };
+                        }
+                        if (Days_Remaining_PL < 30 && Days_Remaining_PL > 7) {
+                            trouble_makers['PL_trouble_makers']['two_weeks'][i] = {
+                                Days_Remaining: Days_Remaining_PL,
+                                Name: Employee
+                            };
+                        }
+                        if (Days_Remaining_PL < 7) {
+                            trouble_makers['PL_trouble_makers']['seven_days'][i] = {
+                                Days_Remaining: Days_Remaining_PL,
+                                Name: Employee
+                            };
+                        }
+                    }
+                    if (Days_Remaining_AI <= 15) {
+                        if (Days_Remaining_AI <= 15 && Days_Remaining_AI > 7) {
+                            trouble_makers['AI_trouble_makers']['two_weeks'][i] = {
+                                Days_Remaining: Days_Remaining_AI,
+                                Name: Employee
+                            };
+                        }
+                        if (Days_Remaining_AI <= 7) {
+                            trouble_makers['AI_trouble_makers']['seven_days'][i] = {
+                                Days_Remaining: Days_Remaining_AI,
+                                Name: Employee
+                            };
+                        }
+                    }
+                    //console.log(Employee, Drivers_licenses, Days_Remaining, Auto_Insurance_Expiration, Days_Remaining,
+                    //Professional_License_Expiration_Date, Days_Remaining_PL, CPR_Expiration_Date, Days_Remaining_CPR,
+                    //    TB_Test_Date, TB_Test_Expiration, Days_Remaining_TB, Email);
+                }
+            }
+        }
+        Email_Supervisor_With_Update(trouble_makers, supervisor);
+    }
+}
+
+{
+//Auto_Insurance
+//Check the Dates and email offenders, then append offenders to a second array for manager heads up emails...
+    function check_AI_Dates(Auto_Insurance_Exp, Days_Remaining, employee_name, supervisor, supervisors_first_name, employee_email) {
+        if (Auto_Insurance_Exp != '' && employee_name != '' && Days_Remaining != '' && employee_email != '') {
+            emailArray = [supervisor, employee_email];
+            goingmsg = '';
+            msgAI = '';
+            msgAI += "Auto-Insurance Expiration: ";
+            msgAI += Auto_Insurance_Exp + "\n";
+
+            goingmsg += "<body>Hello, " + employee_name;
+            goingmsg += " your <b><u>Auto-Insurance</b></u> is nearing and will expire within:" +
+                "<br><font size = '+1'><b>" + Days_Remaining + " days </b> from today.</font>";
+            //Break for how to correct this issue
+            goingmsg += "--------------------------------------------------------------<p>We appreciate your assistance in ensuring ongoing compliance with the Joint Commission, CMS and State guidelines.";
+            goingmsg += "<br>Step 1: <b>Send an updated copy of your Auto-Insurance to your direct supervisor</b>";
+            goingmsg += "<br>Step 2: You may also bring the updated Auto-Insurance to the office if you're in the local area.";
+            goingmsg += "<br><br>Thank you for all you do!<p>";
+            goingmsg += "<br><b>Any responses directly to this email will most likely be missed entirely, please route all communication to your supervisor or Brandon from a brand new email chain!</b>";
+            goingmsg += "<br>       <br>"
+            goingmsg += "<br><font size = '-2'><i>These automated emails are monitored by management staff memebers. Please do not assume these emails can be ignored. </font></i>";
+            if (Days_Remaining == 15) {
+                MailApp.sendEmail(emailArray, employee_name +  " Your Auto-Insurance Expires Within 15 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining <= 3 && Days_Remaining > 0) {
+                MailApp.sendEmail(emailArray, employee_name +  " Please Contact Your Salem Supervisor W/ Updated Auto-Insurance", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining <= 0) {
+                MailApp.sendEmail(emailArray, employee_name +  " Please Contact Your Salem Supervisor W/ Updated Auto-Insurance ASAP", '', {htmlBody: goingmsg});
+            }
+        }
+        if (employee_name != '') {
+            if (Days_Remaining === ' Not on File') {
+                console.log('NOT ON FILLLEE', employee_name);
+                MailApp.sendEmail(supervisor, supervisors_first_name + " Please Add" + employee_name + "'s Auto-Insurance to the Tracker", '', {htmlBody: ''});
+            }
+        }
+    }
+
+//CPR Check
+//Check the Dates and email offenders, then append offenders to a second array for manager heads up emails...
+    function check_CPR_Dates(CPR_Expiration_Date, Days_Remaining, employee_name, supervisor, supervisors_first_name, employee_email) {
+        if (CPR_Expiration_Date != '' && employee_name != '' && Days_Remaining != ''  && employee_email != '') {
+            emailArray = [supervisor, employee_email];
+            goingmsg = '';
+            msgAI = '';
+            msgAI += "Auto-Insurance Expiration: ";
+            msgAI += CPR_Expiration_Date + "\n";
+
+            goingmsg += "<body>Hello, " + employee_name;
+            goingmsg += " your <b><u>CPR CERTIFICATION</b></u> is nearing and will expire within:" +
+                "<br><font size = '+1'><b>" + Days_Remaining + " days </b> from today.</font><br>";
+            //Break for how to correct this issue
+            goingmsg += "----------------------------------------------------------------------------------------<p>We appreciate your assistance in ensuring ongoing compliance with the Joint Commission, CMS and State guidelines.";
+            goingmsg += "<br>Step 1: <b>Send an updated copy of your CPR card to your direct supervisor</b>";
+            goingmsg += "<br>Step 2: You may also bring the updated CPR card to the office if you're in the local area.";
+            goingmsg += "<br><br>Thank you for all you do!<p>";
+            goingmsg += "<br><b>Any responses directly to this email will most likely be missed entirely, please route all communication to your supervisor or Brandon from a brand new email chain!</b>";
+            goingmsg += "<br>       <br>";
+            goingmsg += "<br><font size = '-2'><i>These automated emails are monitored by management staff members. Please do not assume these emails can be ignored. </font></i>";
+            if (Days_Remaining == 60) {
+                MailApp.sendEmail(emailArray, employee_name + " Your CPR Expires Within 60 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining == 30) {
+                MailApp.sendEmail(emailArray, employee_name + " Your CPR Expires Within 30 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining == 15) {
+                MailApp.sendEmail(emailArray, employee_name + " Your CPR Expires Within 15 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining <= 7 && Days_Remaining > 0) {
+                MailApp.sendEmail(emailArray, employee_name + " Please Contact Your Salem Supervisor W/ Updated CPR", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining <= 0) {
+                MailApp.sendEmail(emailArray, "URGENT: " + employee_name + " Please Contact Your Salem Supervisor W/ Updated CPR", '', {htmlBody: goingmsg});
+            }
+
+        }
+        if (employee_name != '') {
+            if (CPR_Expiration_Date === '') {
+                console.log('NOT ON FILLE', employee_name);
+                MailApp.sendEmail(supervisor, supervisors_first_name + " Please Add " + employee_name + "'s CPR License to the Tracker", '', {htmlBody: ''});
+            }
+        }
+    }
+
+//TB Check
+//Check the Dates and email offenders, then append offenders to a second array for manager heads up emails...
+    function check_TB_Dates(TB_Expiration_Date, Days_Remaining, employee_name, supervisor, supervisors_first_name, employee_email) {
+        if (TB_Expiration_Date != '' && employee_name != '' && Days_Remaining != ''  && employee_email != '') {
+            emailArray = [supervisor, employee_email];
+            goingmsg = '';
+
+            goingmsg += "<body>Hello, " + employee_name;
+            goingmsg += " your <b><u>TB Test Expiration</b></u> is nearing and will expire within:" +
+                "<br><font size = '+1'><b>" + Days_Remaining + " days </b> from today.</font><br>";
+            //Break for how to correct this issue
+            goingmsg += "--------------------------------------------------------------<p>We appreciate your assistance in ensuring ongoing compliance with the Joint Commission, CMS and State guidelines.";
+            goingmsg += "<br>Step 1: <b>Send an updated copy of your TB Test to your direct supervisor</b>";
+            goingmsg += "<br>Step 2: You may also bring the updated TB Test to the office if you're in the local area.";
+            goingmsg += "<br><br>Thank you for all you do! And remember that we use Concentra for TB testing.<p>";
+            goingmsg += "<br><b>Any responses directly to this email will most likely be missed entirely, please route all communication to your supervisor or Brandon from a brand new email chain!</b>";
+            goingmsg += "<p>Your TB Test needs renewal by:<br><b><font size = '+2'> " + TB_Expiration_Date + "</font></b><br><p>Please begin the renewal process ASAP to assure timely renewal.";
+            goingmsg += "<br>       <br>    "
+            goingmsg += "<br><font size = '-2'><i>These automated emails are monitored by management staff memebers. Please do not assume these emails can be ignored. </font></i>";
+            if (Days_Remaining == 60) {
+                MailApp.sendEmail(emailArray, employee_name + " Your TB on File is Set to Expire Within 60 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining == 30) {
+                MailApp.sendEmail(emailArray, employee_name + " Your TB on File is Set to Expire Within 30 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining == 15) {
+                MailApp.sendEmail(emailArray, employee_name + " Your TB on File is Set to Expire Within 15 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining <= 7 && Days_Remaining > 0) {
+                MailApp.sendEmail(emailArray, employee_name + " Your TB on File is Set to Expire Within " + Days_Remaining + " Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining <= 0) {
+                MailApp.sendEmail(emailArray, "URGENT: " + employee_name + " Please Contact Your Salem Supervisor W/ Updated TB", '', {htmlBody: goingmsg});
+            }
+
+        }
+        if (employee_name != '') {
+            if (TB_Expiration_Date === '') {
+                console.log(employee_name, 'NOT ON FILE!!!');
+                MailApp.sendEmail(supervisor,  supervisors_first_name + " Please Add " + employee_name + "'s TB Test Expiration to the Tracker", '', {htmlBody: ''});
+            }
+        }
+    }
+
+//Drivers License Check
+//Check the Dates and email offenders, then append offenders to a second array for manager heads up emails...
+    function check_DL_Dates(DL_Expiration_Date, Days_Remaining, employee_name, supervisor, supervisors_first_name, employee_email) {
+        if (DL_Expiration_Date != '' && employee_name != '' && Days_Remaining != ''  && employee_email != '') {
+            emailArray = [supervisor, employee_email];
+            goingmsg = '';
+
+            goingmsg += "<body>Hello, " + employee_name;
+            goingmsg += " your <b><u>Drivers License</b></u> is nearing and will expire within:" +
+                "<br><font size = '+1'><b>" + Days_Remaining + " days </b> from today.</font><br>";
+            //Break for how to correct this issue
+            goingmsg += "--------------------------------------------------------------<p>We appreciate your assistance in ensuring ongoing compliance with the Joint Commission, CMS and State guidelines.";
+            goingmsg += "<br>Step 1: <b>Send an updated copy of your Drivers License to your direct supervisor</b>";
+            goingmsg += "<br>Step 2: You may also bring the updated Drivers License to the office if you're in the local area.";
+            goingmsg += "<br><br>Thank you for all you do!<p>";
+            goingmsg += "<br><b>Any responses directly to this email will most likely be missed entirely, please route all communication to your supervisor or Brandon from a brand new email chain!</b>";
+            
+            goingmsg += "<br>       <br>    "
+            goingmsg += "<br><font size = '-2'><i>These automated emails are monitored by management staff memebers. Please do not assume these emails can be ignored. </font></i>";
+            if (Days_Remaining == 60) {
+                MailApp.sendEmail(emailArray, employee_name + " Your Drivers License on File is Set to Expire Within 60 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining == 30) {
+                MailApp.sendEmail(emailArray, employee_name + " Your Drivers License on File is Set to Expire Within 30 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining == 15) {
+                MailApp.sendEmail(emailArray, employee_name + " Your Drivers License on File is Set to Expire Within 15 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining <= 7 && Days_Remaining > 0) {
+                MailApp.sendEmail(emailArray, employee_name + " Your Drivers License on File is Set to Expire Within " + Days_Remaining + " Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining <= 0) {
+                MailApp.sendEmail(emailArray, "URGENT: " + employee_name + " Please Contact Your Salem Supervisor W/ Updated Drivers License", '', {htmlBody: goingmsg});
+            }
+
+        }
+        if (employee_name != '') {
+            if (DL_Expiration_Date === '') {
+                console.log('Not on File', employee_name);
+                MailApp.sendEmail(supervisor, supervisors_first_name + " Please Add " + employee_name + "'s Drivers License to the Tracker", '', {htmlBody: ''});
+            }
+        }
+    }
+
+//Professional License Check
+//Check the Dates and email offenders, then append offenders to a second array for manager heads up emails...
+    function check_Pro_Dates(PL_Expiration_Date, Days_Remaining, employee_name, supervisor, supervisors_first_name, employee_email) {
+        //console.log(PL_Expiration_Date, Days_Remaining, employee_name)
+        if (PL_Expiration_Date != '' && employee_name != '' && Days_Remaining != ''  && employee_email != '') {
+            emailArray = [supervisor, employee_email];
+            goingmsg = '';
+
+            goingmsg += "<body>Hello, " + employee_name;
+            goingmsg += " your <b><u>Professional License</b></u> is nearing and will expire within:" +
+                "<br><font size = '+1'><b>" + Days_Remaining + " days </b> from today.</font><br>";
+            //Break for how to correct this issue
+            goingmsg += "--------------------------------------------------------------<p>We appreciate your assistance in ensuring ongoing compliance with the Joint Commission, CMS and State guidelines.";
+            goingmsg += "<br>Step 1: <b>Send an updated copy of your Professional License to your direct supervisor</b>";
+            goingmsg += "<br>Step 2: You may also bring the updated Professional License to the office if you're in the local area.";
+            goingmsg += "<br><br>Thank you for all you do!<p>";
+            goingmsg += "<br><b>Any responses directly to this email will most likely be missed entirely, please route all communication to your supervisor or Brandon from a brand new email chain!</b>";
+            goingmsg += "<p>If your Professional License is not renewed by:<br><b><font size = '+2'> " + PL_Expiration_Date + "</font></b><br><p>You will not be allowed to see patients at all due to state law. So please begin the renewal process ASAP to assure timely renewal.";
+            goingmsg += "<br>       <br>    "
+            goingmsg += "<br><font size = '-2'><i>These automated emails are monitored by management staff memebers. Please do not assume these emails can be ignored. </font></i>";
+            if (Days_Remaining == 60) {
+                MailApp.sendEmail(emailArray, employee_name + " Your Professional License on File is Set to Expire Within 60 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining == 30) {
+                MailApp.sendEmail(emailArray, employee_name + " Your Professional License on File is Set to Expire Within 30 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining == 15) {
+                MailApp.sendEmail(emailArray, employee_name + " Your Professional License on File is Set to Expire Within 15 Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining <= 7 && Days_Remaining > 0) {
+                MailApp.sendEmail(emailArray, employee_name + " Your Professional License on File is Set to Expire Within " + Days_Remaining + " Days", '', {htmlBody: goingmsg});
+            }
+            if (Days_Remaining <= 0) {
+                MailApp.sendEmail(emailArray, "URGENT: " + employee_name + " Please Contact Your Salem Supervisor W/ Updated Professional License", '', {htmlBody: goingmsg});
+            }
+
+        }
+        if (employee_name != '') {
+            if (PL_Expiration_Date === '') {
+                console.log('Not on file', employee_name);
+                MailApp.sendEmail(supervisor, supervisors_first_name + " Please Add " + employee_name + "'s Professional License to the Tracker", '', {htmlBody: ''});
+            }
+        }
+    }
+}
+function Email_Supervisor_With_Update(trouble_makers_object, supervisor) {
+    var ai_html_rows = "";
+    var ai_index = 0;
+    var dr_html_rows = "";
+    var dr_index = 0;
+    var pl_html_rows = "";
+    var pl_index = 0;
+    var cpr_html_rows = "";
+    var cpr_index = 0;
+    var tb_html_rows = "";
+    var tb_index = 0;
+    for (troubleMakerKey in trouble_makers_object) {
+        for (troubleMakerKey2 in trouble_makers_object[troubleMakerKey]) {
+            for (troubleMaker in trouble_makers_object[troubleMakerKey][troubleMakerKey2]) {
+                if (troubleMakerKey === 'AI_trouble_makers') {
+                    var value = trouble_makers_object[troubleMakerKey][troubleMakerKey2][troubleMaker];
+                    ai_index += 1;
+                    ai_html_rows += "<tr>" +
+                        "<td>" + ai_index + "</td>" +
+                        "<td>" + value['Name'] + "</td>" +
+                        "<td>" + value['Days_Remaining'] + "</td>"
+                }
+                if (troubleMakerKey === 'CPR_trouble_makers') {
+                    var value = trouble_makers_object[troubleMakerKey][troubleMakerKey2][troubleMaker];
+                    cpr_index += 1;
+                    cpr_html_rows += "<tr>" +
+                        "<td>" + cpr_index + "</td>" +
+                        "<td>" + value['Name'] + "</td>" +
+                        "<td>" + value['Days_Remaining'] + "</td>"
+                }
+                if (troubleMakerKey === 'DR_trouble_makers') {
+                    var value = trouble_makers_object[troubleMakerKey][troubleMakerKey2][troubleMaker];
+                    dr_index += 1;
+                    dr_html_rows += "<tr>" +
+                        "<td>" + dr_index + "</td>" +
+                        "<td>" + value['Name'] + "</td>" +
+                        "<td>" + value['Days_Remaining'] + "</td>"
+                }
+                if (troubleMakerKey === 'PL_trouble_makers') {
+                    var value = trouble_makers_object[troubleMakerKey][troubleMakerKey2][troubleMaker];
+                    pl_index += 1;
+                    pl_html_rows += "<tr>" +
+                        "<td>" + pl_index + "</td>" +
+                        "<td>" + value['Name'] + "</td>" +
+                        "<td>" + value['Days_Remaining'] + "</td>"
+                }
+                if (troubleMakerKey === 'TB_trouble_makers') {
+                    var value = trouble_makers_object[troubleMakerKey][troubleMakerKey2][troubleMaker];
+                    tb_index += 1;
+                    tb_html_rows += '<tr>' +
+                        "<td>" + tb_index + "</td>" +
+                        "<td>" + value['Name'] + "</td>" +
+                        "<td>" + value['Days_Remaining'] + "</td>" +
+                        "</tr>";
+                }
+            }
+        }
+    }
+    Html_Table(ai_html_rows, supervisor, 'Upcoming Auto-Insurance Expirations');
+    Html_Table(cpr_html_rows, supervisor, 'Upcoming CPR Expirations');
+    Html_Table(dr_html_rows, supervisor, 'Upcoming Drivers License Expirations');
+    Html_Table(pl_html_rows, supervisor, 'Upcoming Professional License Expirations');
+    Html_Table(tb_html_rows, supervisor, 'Upcoming TB Test Expirations');
+}
+
+function Html_Table(rows, supervisor, type) {
+  if (rows !== ''){
+        var html_table = '<table><tr>' +
+        "<th>Index</th>" +
+        "<th>Employee Name</th>" +
+        "<th>Days Remaining</th>" +
+        "</tr>" +
+        rows +
+        "</table>";
+
+      MailApp.sendEmail(supervisor, type, '', {htmlBody: html_table});
+  }
+}
