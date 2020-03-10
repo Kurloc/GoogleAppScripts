@@ -1,3 +1,9 @@
+//This is a few functions that work on a spreadsheet to track the date of different licenses that may be in your HR files.
+//Mine is currently set up for 5 things, drivers license, TB, CPR, auto-insurance, and professional license tracking. 
+//**On the spreadsheet this runs off to exclude someone from the script just set it up so that the cell has N/A in it.
+//**Do that however you'd like, I just use a few ifs in an in-cell function
+
+
 function MainFunction() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('#Insert Spreadsheet Name');
   var lastRow = spreadsheet.getLastRow();
